@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://goolory.github.io/2020/04/15/TCP/</loc>
+    
+    <lastmod>2020-04-15T03:00:29.175Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://goolory.github.io/2020/04/15/network/</loc>
     
-    <lastmod>2020-04-15T02:53:25.190Z</lastmod>
+    <lastmod>2020-04-15T02:57:12.205Z</lastmod>
     
   </url>
   
@@ -58,21 +65,7 @@
   </url>
   
   <url>
-    <loc>https://goolory.github.io/books/index.html</loc>
-    
-    <lastmod>2020-03-17T03:05:56.881Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://goolory.github.io/categories/index.html</loc>
-    
-    <lastmod>2020-03-17T03:05:56.881Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://goolory.github.io/repository/index.html</loc>
     
     <lastmod>2020-03-17T03:05:56.881Z</lastmod>
     
@@ -86,7 +79,21 @@
   </url>
   
   <url>
+    <loc>https://goolory.github.io/repository/index.html</loc>
+    
+    <lastmod>2020-03-17T03:05:56.881Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://goolory.github.io/tags/index.html</loc>
+    
+    <lastmod>2020-03-17T03:05:56.881Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://goolory.github.io/books/index.html</loc>
     
     <lastmod>2020-03-17T03:05:56.881Z</lastmod>
     

@@ -17,19 +17,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>OLSR路由协概述 | Hexo</title>
-  <meta name="description" content="OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。 OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，O">
-<meta name="keywords" content="OLSR">
+  <title>TCP | Hexo</title>
+  <meta name="description" content="应用层        用户进程      用户进程 -—————————————- 传输层       TCP              UDP -—————————————- 网络层        ICMP      IP      IGMP -—————————————– 链路层        ARP      以太网接口程序  RARP TCP提供一种面向连接的、可靠的字节流服务 TCP 建">
+<meta name="keywords" content="network">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OLSR路由协概述">
-<meta property="og:url" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0&#x2F;index.html">
+<meta property="og:title" content="TCP">
+<meta property="og:url" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;index.html">
 <meta property="og:site_name" content="xyongs&#39; blog">
-<meta property="og:description" content="OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。 OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，O">
+<meta property="og:description" content="应用层        用户进程      用户进程 -—————————————- 传输层       TCP              UDP -—————————————- 网络层        ICMP      IP      IGMP -—————————————– 链路层        ARP      以太网接口程序  RARP TCP提供一种面向连接的、可靠的字节流服务 TCP 建">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-15T02:15:48.168Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;7B7F0473BAED43788E66634E44132EC9">
+<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;D207AF5E0EDA4CBCBEB9A6FBD9C19AC0">
+<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;20D1FD2072FD40E8B3849AD7E457BA9F">
+<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;512F2740576043EF97E30D20031231FB">
+<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;8C7AA255D3A14575A64565E286E729F2">
+<meta property="og:updated_time" content="2020-04-15T03:00:29.175Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;7B7F0473BAED43788E66634E44132EC9">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/index.html">
+  <link rel="canonical" href="https://goolory.github.io/2020/04/15/TCP/index.html">
   
     <link rel="alternate" href="/atom.xml" title="xyongs&#39; blog" type="application/atom+xml">
   
@@ -338,14 +344,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-OLSR路由协议概述" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-TCP" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      OLSR路由协概述
+      TCP
     </h1>
   
 
@@ -353,82 +359,95 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" class="article-date">
-	  <time datetime="2019-11-22T15:03:40.000Z" itemprop="datePublished">2019-11-22</time>
+	<a href="/2020/04/15/TCP/" class="article-date">
+	  <time datetime="2020-04-15T02:58:42.000Z" itemprop="datePublished">2020-04-15</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/MANET/">MANET</a>
+    <a class="article-category-link" href="/categories/network/">network</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link" href="/tags/OLSR/" rel="tag">OLSR</a>
+	<a class="article-tag-link" href="/tags/network/" rel="tag">network</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/04/15/TCP/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <p>OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。</p>
-<p>OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，OLSR也适用于通信对随时间变化的场景:在这种情况下不会生成额外的控制流量，因为所有已知目的地都始终维护路由。</p>
-<hr>
-<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>OLSR是一种用于移动自组织网络的主动路由协议。该协议继承了链路状态算法的稳定性，并且由于其主动性，在需要的时候可以立即使用路由。OLSR是对经典链路状态协议的优化，为移动自组织网络量身定制。</p>
-<p>OLSR<strong>只使用选定的节点(称为MPRs)来重新传输控制消息</strong>，从而<strong>最小化控制流量泛滥带来的开销</strong>。这种<u>技术大大减少了将消息发送到网络中所有节点所需的重发次数</u>。其次，OLSR只需要淹没部分链路状态即可提供最短路径路径。所需的链路状态信息的最小集合是，所有选择为MPRs的节点必须将链路声明到它们的MPR选择器。额外的拓扑信息，如果存在，可以利用，例如，为冗余的目的</p>
-<p>通过减少周期性控制消息传输的最大时间间隔，OLSR可以优化对拓扑变化的响应性。此外，由于OLSR持续维护到网络中所有目的地的路由，所以该协议对于流量模式非常有利，在这种模式中，一个大的节点子集与另一个大的节点子集通信，并且[源、目的]对随着时间而变化。该协议特别适用于大型和密集的网络，因为使用MPRs进行的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。</p>
-<p>OLSR被<strong>设计成以完全分布式的方式工作</strong>，<strong>不依赖于任何中心实体</strong>。该协议不需要可靠的控制消息传输:每个节点定期发送控制消息，因此可以<strong>承受一些此类消息的合理丢失</strong>。这种损失经常发生在无线电网络中，由于碰撞或其他传输问题。</p>
-<p>而且，OLSR<strong>不需要按顺序传递消息</strong>。每个控制消息包含一个序列号，序列号为每个消息递增。因此，如果需要，控制消息的接收者可以很容易地识别哪些信息是最近的—即使消息在传输过程中被重新排序。</p>
-<p>此外，OLSR还支持协议扩展，如睡眠模式操作、多路路由等。这些扩展可以作为协议的补充而引入，而不会破坏与早期版本的向后兼容性</p>
-<p>OLSR不需要对IP包的格式进行任何更改。因此，任何现有的IP堆栈都可以这样使用:<strong>协议仅与路由表管理交互。</strong></p>
-<hr>
-<h4 id="MPR"><a href="#MPR" class="headerlink" title="MPR"></a>MPR</h4><p><strong>多点中继的思想</strong>是通过<em>减少同一区域的冗余重传来最小化网络中泛滥消息的开销</em>。网络中的每个节点在其对称的1跳邻居中选择一组节点，这些节点可以重新传输其消息。这组选定的邻居节点称为该节点的“多点中继”(MPR)集。节点N的邻居(不在其MPR集中)接收和处理广播消息，但不转发从节点N接收到的广播消息。</p>
-<p><u>每个节点从它的1跳对称邻居中选择它的MPR集</u>。选择这个集合时，<strong>它覆盖(在无线电范围方面)所有对称的严格2跳节点</strong>。N的MPR集合，记作MPR(N)，是N的对称1跳邻域的任意子集，满足以下条件:N的对称严格2跳邻域内的每个节点必须有一个指向MPR(N)的对称链接。MPR集越小，路由协议导致的控制流量开销越小。[2]给出了MPR选择算法的分析和实例。</p>
-<p><strong>每个节点维护选择它作为MPR的邻居集的信息</strong>。这个集合称为节点的“多点中继选择集合”(MPR选择集合)。节点从邻居定期接收的HELLO消息中获取此信息。</p>
-<p>从节点N的MPR选择器中发出的广播消息，打算在整个网络中传播，如果节点N还没有接收到广播消息，则假定该广播消息由节点N重新发送。这个集合可以随时间改变(即，当节点选择另一个MPR-set时)，并由其HELLO消息中的选择器节点指示。</p>
-<hr>
-<h4 id="协议功能"><a href="#协议功能" class="headerlink" title="协议功能"></a>协议功能</h4><p>本节概述总体协议的功能。OLSR被模块化为功能的“核心”和一组辅助功能，这些功能是协议操作所必需的。</p>
-<p>核心本身指定了能够在独立的MANET中提供路由的协议。每个辅助功能提供额外的功能，这些功能可能适用于特定的场景，例如，当一个节点提供MANET和另一个路由域之间的连接时。所有辅助功能都是兼容的，只要辅助功能的任何(子)集可以用核心实现即可。此外，该协议允许异构节点，即，实现辅助功能的不同子集的节点在网络中共存。将OLSR的功能划分为核心功能和一组辅助功能的目的是提供一个简单且易于理解的协议，并提供一种只在需要特定附加功能时增加复杂性的方法。</p>
-<h5 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h5><p>OLSR的核心功能指定了节点的行为，配备了参与MANET的OLSR接口，并运行OLSR作为路由协议。这包括OLSR协议消息的通用规范及其通过网络的传输，以及<strong>链路感知</strong>、<strong>拓扑扩散</strong>和<strong>路由计算</strong>。</p>
-<p>具体来说，核心是由以下组件组成的：</p>
-<p><strong>分组格式和转发：</strong></p>
-<p>​    包格式的通用规范和优化的洪泛机制是所有OLSR控制流量的传输机制</p>
-<p><strong>链路感知</strong></p>
-<p>​    链接感知是通过在接口上定期发送HELLO消息来实现的，通过这些接口检查连接性。为每个接口生成一个单独的HELLO消息，并根据第7节中的规定发出相应的HELLO消息。</p>
-<p>​    由链路感应产生的是一个本地链路集，描述“本地接口”和“远程接口”之间的链路。，邻居节点上的接口。</p>
-<p>​    如果链路层提供了足够的信息，则可以利用这些信息来填充本地链路集，而不是进行HELLO消息交换。</p>
-<p><strong>邻居检测</strong></p>
-<p>对于只有单个接口节点的网络，节点可以直接从作为链路感知的一部分交换的信息中扣除邻居集:根据定义，单个接口节点的“主地址”是该节点上唯一接口的地址。在具有多个接口节点的网络中，需要额外的信息才能将接口地址映射到主地址(从而映射到节点)。这些附加信息是通过第5节中描述的多个接口声明(MID)消息获得的。</p>
-<p><strong>MPR选择和MPR信号</strong></p>
-<p>MPR选择的目的是让一个节点选择它的邻居的一个子集，这样一个广播消息，由这些被选择的邻居重新传输，将被所有节点接收2跳。计算节点的MPR集时，对于每个接口，它都满足这个条件。执行此计算所需的信息是通过定期交换HELLO消息获得的，如第6节所述。MPR选择程序详见第8.3节。MPR信号是根据第6节的规定提供的。</p>
-<p><strong>拓扑控制消息扩散</strong></p>
-<p>拓扑控制消息是分散的，其目的是为网络中的每个节点提供足够的链路状态信息，以允许路由计算。拓扑控制消息在与第9节的规定相对应的情况下被扩散。</p>
-<p><strong>路由计算</strong></p>
-<hr>
-<h2 id="OLSR协议术语"><a href="#OLSR协议术语" class="headerlink" title="OLSR协议术语"></a>OLSR协议术语</h2><p><strong>node:</strong>一种MANET路由器</p>
-<p><strong>OLSR接口(OLSR interface):</strong>参与运行OLSR的MANET的网络设备。一个节点可以有多个OLSR接口，每个接口分配一个惟一的IP地址。</p>
-<p><strong>非OLSR接口(non OLSR interface)</strong>:网络设备，不参与运行OLSR的MANET。一个节点可能有几个非OLSR接口(无线和/或有线)。来自这些接口的路由信息可以注入到OLSR路由域。</p>
-<p><strong>单个OLSR接口节点(single OLSR interface node)</strong>:具有单个OLSR接口的节点，参与一个OLSR路由域。</p>
-<p><strong>多个OLSR接口节点(multiple OLSR interface node)</strong></p>
-<p><strong>主地址（main address）：</strong>一个节点的主地址，将在OLSR中用于控制流量，作为该节点发出的所有消息的“始发者地址”。它是节点的一个OLSR接口的地址。单个OLSR接口节点必须使用其唯一OLSR接口的地址作为主地址。多个OLSR接口节点必须选择一个OLSR接口地址作为“主地址”(相当于“路由器ID”或“节点标识符”)。选择哪个地址并不重要，但是节点应该始终使用与其主地址相同的地址。</p>
-<p><strong>邻居节点（neighbor node）</strong></p>
-<p><strong>二跳邻居节点（2-hop neighbor）</strong></p>
-<p><strong>严格2-hop邻居（strict 2-hop neighbor）</strong>：一个2跳邻居，它不是节点本身，也不是节点的邻居，而且是邻居的邻居，其意愿不同于节点的WILL_NEVER。</p>
-<p><strong>multipoint relay (MPR)</strong></p>
-<p><strong>multipoint relay selector (MPR selector, MS)</strong>：选择其1跳邻居节点X作为其多点中继的节点将被称为节点X的多点中继选择器。</p>
-<p><strong>链路（link）</strong>：一个链接是一对OLSR接口(来自两个不同的节点)，它们可以相互监听对方的声音。，其中一个可以接收来自另一个的流量)。当一个节点的一个接口与另一个节点的一个接口有链接时，该节点被称为与另一个节点有链接</p>
-<p><strong>对称链路（symmetric link）</strong></p>
-<p><strong>非对称链路（asymmetric link）</strong></p>
-<p><strong>对称一跳邻居</strong></p>
-<p><strong>对称二跳邻居</strong></p>
-<p><strong>对称严格二跳邻居</strong></p>
+        <p><em>应用层</em>        用户进程      用户进程</p>
+<p>-—————————————-</p>
+<p><em>传输层</em>       TCP              UDP</p>
+<p>-—————————————-</p>
+<p>网络层        ICMP      IP      IGMP</p>
+<p>-—————————————–</p>
+<p>链路层        ARP      以太网接口程序  RARP</p>
+<p><strong>TCP提供一种面向连接的、可靠的字节流服务</strong></p>
+<p><strong>TCP 建立连接—-三次握手</strong></p>
+<p>1、客户端发送一个SYN段指明打算连接的服务器端口，以及初始序号（ISN）</p>
+<p>2、服务器发回包含服务器的初始序号的SYN报文段作为应答，同时将确认序号设置为客户的ISN加一以对客户的SYN报文进行确认；</p>
+<p>3、客户确认序号设置为服务器的ISN加一，对服务器的SYN报文确认</p>
+<p><strong>为什么TCP客户端最后还要发送一次确认呢？</strong></p>
+<p>一句话，主要防止已经失效的连接请求报文突然又传送到了服务器，从而产生错误。</p>
+<p>如果使用的是两次握手建立连接，假设有这样一种场景，客户端发送了第一个请求连接并且没有丢失，只是因为在网络结点中滞留的时间太长了，由于TCP的客户端迟迟没有收到确认报文，以为服务器没有收到，此时重新向服务器发送这条报文，此后客户端和服务器经过两次握手完成连接，传输数据，然后关闭连接。此时此前滞留的那一次请求连接，网络通畅了到达了服务器，这个报文本该是失效的，但是，两次握手的机制将会让客户端和服务器再次建立连接，这将导致不必要的错误和资源的浪费。</p>
+<p>如果采用的是三次握手，就算是那一次失效的报文传送过来了，服务端接受到了那条失效报文并且回复了确认报文，但是客户端不会再次发出确认。由于服务器收不到确认，就知道客户端并没有请求连接。</p>
+<p><strong>TCP断开连接—-四次挥手</strong></p>
+<p>客户端发送一个FIN报文（报文4）给服务器，表示我将关闭客户端到服务器端这个方向的连接。</p>
+<p>服务器收到报文4后，发送一个ACK报文（报文5）给客户端，序号为报文4的序号加1。</p>
+<p>服务器发送一个FIN报文（报文6）给客户端，表示自己也将关闭服务器端到客户端这个方向的连接。</p>
+<p>客户端收到报文6后，发回一个ACK报文（报文7）给服务器，序号为报文6的序号加1。</p>
+<p><strong>理由</strong></p>
+<p><strong>这是由于TCP的半关闭造成的。既然一个TCP连接是双全工的，因此每个方向必须单独地进行关闭。</strong></p>
+<p><img src="https:////note.youdao.com/src/7B7F0473BAED43788E66634E44132EC9" alt="img"></p>
+<p><strong>为什么客户端最后还要等待2MSL？</strong></p>
+<p>MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同的MSL值。</p>
+<p>第一，保证客户端发送的最后一个ACK报文能够到达服务器，因为这个ACK报文可能丢失，站在服务器的角度看来，我已经发送了FIN+ACK报文请求断开了，客户端还没有给我回应，应该是我发送的请求断开报文它没有收到，于是服务器又会重新发送一次，而客户端就能在这个2MSL时间段内收到这个重传的报文，接着给出回应报文，并且会重启2MSL计时器。</p>
+<p>第二，防止类似与“三次握手”中提到了的“已经失效的连接请求报文段”出现在本连接中。客户端发送完最后一个确认报文后，在这个2MSL时间中，就可以使本连接持续的时间内所产生的所有报文段都从网络中消失。这样新的连接中不会出现旧连接的请求报文。</p>
+<p><strong>为什么建立连接是三次握手，关闭连接确是四次挥手呢？</strong></p>
+<p>建立连接的时候， 服务器在LISTEN状态下，收到建立连接请求的SYN报文后，把ACK和SYN放在一个报文里发送给客户端。 </p>
+<p>而关闭连接时，服务器收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，而自己也未必全部数据都发送给对方了，所以己方可以立即关闭，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送，从而导致多了一次。</p>
+<p>如果已经建立了连接，但是客户端突然出现故障了怎么办？</p>
+<p>TCP还设有一个保活计时器，显然，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为2小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔75分钟发送一次。若一连发送10个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。</p>
+<p><strong>数据分片</strong></p>
+<p>数据从主机传送到另一个主机往往要经过路由器，网关等设备。这些设备都要对经过的数据进行处理。由于这些设备处理数据的能力有有一定限制，不能处理超出额定字节的数据，所以发送的时候需要确定发送数据包的最大字节数。</p>
+<p><strong>滑动窗口机制</strong></p>
+<p>在进行数据传输时，如果传输的数据比较大，需要拆分为多个数据包进行发送。TCP协议需要对数据包进行确认才能发送下一个数据包。</p>
+<p>这样一来会在等待确认应答包环节浪费时间。为了避免这种情况，引入窗口概念。</p>
+<p>窗口大小：指不需要等待确认应答包而可以继续发送数据包的最大值</p>
+<p><img src="https:////note.youdao.com/src/D207AF5E0EDA4CBCBEB9A6FBD9C19AC0" alt="img"></p>
+<p>当发送端接收到确认应答包后向后滑动</p>
+<p><img src="https:////note.youdao.com/src/20D1FD2072FD40E8B3849AD7E457BA9F" alt="img"></p>
+<p><strong>发送数据包丢失</strong></p>
+<p><img src="https:////note.youdao.com/src/512F2740576043EF97E30D20031231FB" alt="img"></p>
+<p>下面分为 7 部分对上图进行讲解。</p>
+<p>1) 发送端发送数据包：这里窗口大小为 4，发送端发送 4 个数据包，分别为 1-1000、1001-2000、2001-3000 和 3001-4000。</p>
+<p>2) 接收端返回确认应答包：接收端接收到这些数据，并给出确认应答包。接收端收到了数据包 1-1000，返回了确认应答包；收到了数据包 1001-2000，返回了确认应答包；但是数据包 2001-3000，在发送过程中丢失了，没有成功到达接收端。数据包 3001-4000 没有丢失，成功到达了接收端，但是该数据包不是接收端应该接收的数据包，数据包 2001-3000 才是真正应该接收的数据包。因此收到数据包 3001-4000 以后，接收端第一次返回下一个应该发送 2001 的数据包的确认应答包。</p>
+<p>3) 发送端发送数据包：发送端仍然继续向接收端发送 4 个数据包，分别为 4001-5000、5001-6000、6001-7000 和 7001-8000。</p>
+<p>4) 接收端返回确认应答包：接收端接收到这些数据，并给出确认应答包。当接收端收到数据包 4001-5000 时，发现不是自己应该接收的数据包 2001-3000，第二次返回下一个应该发送 2001 的数据包的确认应答包。当接收端收到数据包 5001-6000 时，仍然发现不是自己应该接收的数据包 2001-3000，第三次返回下一个应该发送 2001 的数据包的确认应答包。以此类推直到接收完所有数据包，接收端都返回下一个应该发送 2001 的数据包的确认应答包。</p>
+<p>5) 发送端重发数据包：发送端连续 3 次收到接收端发来的下一个应该发送 2001 的数据包的确认应答包，认为数据包 2001-3000 丢失了，就进行重发该数据包。</p>
+<p>6) 接收端收到重发数据包：接收端收到重发数据包以后，查看这次是自己应该接收的数据包 2001-3000，并返回确认应答包，告诉发送端，下一个该接收 8001 的数据包了。</p>
+<p>7) 发送端发送数据包：发送端收到确认应答包后，继续发送窗口大小为 4 的数据包，分别为 8001-9000、9001-10000、10001-11000 和 11001-12000。</p>
+<p><strong>TCP 流控制</strong></p>
+<p>在使用滑动窗口机制进行数据传输时，发送方根据实际情况发送数据包，接收端接收数据包。但是，接收端处理数据包的能力是不同的。</p>
+<p>1) 如果窗口过小，发送端发送少量的数据包，接收端很快就处理了，并且还能处理更多的数据包。这样，当传输比较大的数据时需要不停地等待发送方，造成很大的延迟。</p>
+<p>2) 如果窗口过大，发送端发送大量的数据包，而接收端处理不了这么多的数据包，这样，就会堵塞链路。如果丢弃这些本应该接收的数据包，又会触发重发机制。</p>
+<p>3) 为了避免这种现象的发生，TCP 提供了流控制。所谓的流控制就是使用不同的窗口大小发送数据包。发送端第一次以窗口大小（该窗口大小是根据链路带宽的大小来决定的）发送数据包，接收端接收这些数据包，并返回确认应答包，告诉发送端自己下次希望收到的数据包是多少（新的窗口大小），发送端收到确认应答包以后，将以该窗口大小进行发送数据包。</p>
+<p>TCP 流控制过程如图所示。</p>
+<p><img src="https:////note.youdao.com/src/8C7AA255D3A14575A64565E286E729F2" alt="img"></p>
+<p>————————————————</p>
+<p>参考：</p>
+<p>TCP/IP协议详解卷一</p>
+<p><a href="https://blog.csdn.net/greentealc/article/details/79880220" target="_blank" rel="noopener">https://blog.csdn.net/greentealc/article/details/79880220</a></p>
+<p><a href="http://c.biancheng.net/view/6427.html" target="_blank" rel="noopener">http://c.biancheng.net/view/6427.html</a></p>
 
       
     </div>
@@ -438,7 +457,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" title="OLSR路由协概述" target="_blank" rel="external">https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/</a>
+      <a href="https://goolory.github.io/2020/04/15/TCP/" title="TCP" target="_blank" rel="external">https://goolory.github.io/2020/04/15/TCP/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -484,13 +503,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" title="OLSR数据包格式与转发"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2019/11/22/%E4%BD%BF%E7%94%A8nvm%E7%AE%A1%E7%90%86node/" title="使用nvm管理node_转"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/04/15/network/" title="计算机网络--协议"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     

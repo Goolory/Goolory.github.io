@@ -26,14 +26,14 @@
 <meta property="og:site_name" content="xyongs&#39; blog">
 <meta property="og:description" content="应用层        用户进程      用户进程 -—————————————- 传输层       TCP              UDP -—————————————- 网络层        ICMP      IP      IGMP -—————————————– 链路层        ARP      以太网接口程序  RARP TCP提供一种面向连接的、可靠的字节流服务 TCP 建">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;7B7F0473BAED43788E66634E44132EC9">
-<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;D207AF5E0EDA4CBCBEB9A6FBD9C19AC0">
-<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;20D1FD2072FD40E8B3849AD7E457BA9F">
-<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;512F2740576043EF97E30D20031231FB">
-<meta property="og:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;8C7AA255D3A14575A64565E286E729F2">
-<meta property="og:updated_time" content="2020-04-15T03:00:29.175Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image5.png">
+<meta property="og:updated_time" content="2020-04-15T03:10:25.433Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;&#x2F;&#x2F;note.youdao.com&#x2F;src&#x2F;7B7F0473BAED43788E66634E44132EC9">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2020&#x2F;04&#x2F;15&#x2F;TCP&#x2F;image1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="https://goolory.github.io/2020/04/15/TCP/index.html">
   
@@ -407,7 +407,7 @@
 <p>客户端收到报文6后，发回一个ACK报文（报文7）给服务器，序号为报文6的序号加1。</p>
 <p><strong>理由</strong></p>
 <p><strong>这是由于TCP的半关闭造成的。既然一个TCP连接是双全工的，因此每个方向必须单独地进行关闭。</strong></p>
-<p><img src="https:////note.youdao.com/src/7B7F0473BAED43788E66634E44132EC9" alt="img"></p>
+<p><img src="/2020/04/15/TCP/image1.png" alt="img"></p>
 <p><strong>为什么客户端最后还要等待2MSL？</strong></p>
 <p>MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同的MSL值。</p>
 <p>第一，保证客户端发送的最后一个ACK报文能够到达服务器，因为这个ACK报文可能丢失，站在服务器的角度看来，我已经发送了FIN+ACK报文请求断开了，客户端还没有给我回应，应该是我发送的请求断开报文它没有收到，于是服务器又会重新发送一次，而客户端就能在这个2MSL时间段内收到这个重传的报文，接着给出回应报文，并且会重启2MSL计时器。</p>
@@ -423,11 +423,11 @@
 <p>在进行数据传输时，如果传输的数据比较大，需要拆分为多个数据包进行发送。TCP协议需要对数据包进行确认才能发送下一个数据包。</p>
 <p>这样一来会在等待确认应答包环节浪费时间。为了避免这种情况，引入窗口概念。</p>
 <p>窗口大小：指不需要等待确认应答包而可以继续发送数据包的最大值</p>
-<p><img src="https:////note.youdao.com/src/D207AF5E0EDA4CBCBEB9A6FBD9C19AC0" alt="img"></p>
+<p><img src="/2020/04/15/TCP/image2.png" alt="img"></p>
 <p>当发送端接收到确认应答包后向后滑动</p>
-<p><img src="https:////note.youdao.com/src/20D1FD2072FD40E8B3849AD7E457BA9F" alt="img"></p>
+<p><img src="/2020/04/15/TCP/image3.png" alt="img"></p>
 <p><strong>发送数据包丢失</strong></p>
-<p><img src="https:////note.youdao.com/src/512F2740576043EF97E30D20031231FB" alt="img"></p>
+<p><img src="/2020/04/15/TCP/image4.png" alt="img"></p>
 <p>下面分为 7 部分对上图进行讲解。</p>
 <p>1) 发送端发送数据包：这里窗口大小为 4，发送端发送 4 个数据包，分别为 1-1000、1001-2000、2001-3000 和 3001-4000。</p>
 <p>2) 接收端返回确认应答包：接收端接收到这些数据，并给出确认应答包。接收端收到了数据包 1-1000，返回了确认应答包；收到了数据包 1001-2000，返回了确认应答包；但是数据包 2001-3000，在发送过程中丢失了，没有成功到达接收端。数据包 3001-4000 没有丢失，成功到达了接收端，但是该数据包不是接收端应该接收的数据包，数据包 2001-3000 才是真正应该接收的数据包。因此收到数据包 3001-4000 以后，接收端第一次返回下一个应该发送 2001 的数据包的确认应答包。</p>
@@ -442,7 +442,7 @@
 <p>2) 如果窗口过大，发送端发送大量的数据包，而接收端处理不了这么多的数据包，这样，就会堵塞链路。如果丢弃这些本应该接收的数据包，又会触发重发机制。</p>
 <p>3) 为了避免这种现象的发生，TCP 提供了流控制。所谓的流控制就是使用不同的窗口大小发送数据包。发送端第一次以窗口大小（该窗口大小是根据链路带宽的大小来决定的）发送数据包，接收端接收这些数据包，并返回确认应答包，告诉发送端自己下次希望收到的数据包是多少（新的窗口大小），发送端收到确认应答包以后，将以该窗口大小进行发送数据包。</p>
 <p>TCP 流控制过程如图所示。</p>
-<p><img src="https:////note.youdao.com/src/8C7AA255D3A14575A64565E286E729F2" alt="img"></p>
+<p><img src="/2020/04/15/TCP/image5.png" alt="img"></p>
 <p>————————————————</p>
 <p>参考：</p>
 <p>TCP/IP协议详解卷一</p>

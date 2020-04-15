@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>OLSR路由协概述 | Hexo</title>
+  <meta name="description" content="OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。 OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，O">
+<meta name="keywords" content="OLSR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OLSR路由协概述">
+<meta property="og:url" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0&#x2F;index.html">
+<meta property="og:site_name" content="xyongs&#39; blog">
+<meta property="og:description" content="OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。 OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，O">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-17T03:12:39.954Z">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="xyongs&#39; blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Goolory" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">xyongs</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">初涉江湖</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> nanjing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Goolory" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MANET/">MANET</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OLSR/" rel="tag">OLSR</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Java/" style="font-size: 14px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/OLSR/" style="font-size: 13.5px;">OLSR</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/node/" style="font-size: 13px;">node</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/03/17/hello-world/" class="title">Hexo使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-03-17T03:05:56.844Z" itemprop="datePublished">2020-03-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/25/%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/" class="title">基本算法思想</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-25T14:21:44.000Z" itemprop="datePublished">2019-11-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/MANET/">MANET</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" class="title">OLSR数据包格式与转发</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T15:08:37.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/MANET/">MANET</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" class="title">OLSR路由协概述</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T15:03:40.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/%E4%BD%BF%E7%94%A8nvm%E7%AE%A1%E7%90%86node/" class="title">使用nvm管理node_转</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T14:23:12.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-OLSR路由协议概述" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      OLSR路由协概述
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" class="article-date">
+	  <time datetime="2019-11-22T15:03:40.000Z" itemprop="datePublished">2019-11-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/MANET/">MANET</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/OLSR/" rel="tag">OLSR</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>OLSR是一种用于移动自组网[1]、[2]的主动路由协议。它非常适合大型和密集的移动网络，因为使用MPRs实现的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。</p>
+<p>OLSR使用逐跳路由，即，每个节点使用其本地信息来路由包。OLSR非常适合于网络，在网络中，较大的节点集之间的流量是随机的、零星的，而不是几乎完全只在较小的特定节点集之间。作为一种主动协议，OLSR也适用于通信对随时间变化的场景:在这种情况下不会生成额外的控制流量，因为所有已知目的地都始终维护路由。</p>
+<hr>
+<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>OLSR是一种用于移动自组织网络的主动路由协议。该协议继承了链路状态算法的稳定性，并且由于其主动性，在需要的时候可以立即使用路由。OLSR是对经典链路状态协议的优化，为移动自组织网络量身定制。</p>
+<p>OLSR<strong>只使用选定的节点(称为MPRs)来重新传输控制消息</strong>，从而<strong>最小化控制流量泛滥带来的开销</strong>。这种<u>技术大大减少了将消息发送到网络中所有节点所需的重发次数</u>。其次，OLSR只需要淹没部分链路状态即可提供最短路径路径。所需的链路状态信息的最小集合是，所有选择为MPRs的节点必须将链路声明到它们的MPR选择器。额外的拓扑信息，如果存在，可以利用，例如，为冗余的目的</p>
+<p>通过减少周期性控制消息传输的最大时间间隔，OLSR可以优化对拓扑变化的响应性。此外，由于OLSR持续维护到网络中所有目的地的路由，所以该协议对于流量模式非常有利，在这种模式中，一个大的节点子集与另一个大的节点子集通信，并且[源、目的]对随着时间而变化。该协议特别适用于大型和密集的网络，因为使用MPRs进行的优化在这种情况下工作得很好。与经典的链路状态算法相比，网络越大、越密集，就可以实现越多的优化。</p>
+<p>OLSR被<strong>设计成以完全分布式的方式工作</strong>，<strong>不依赖于任何中心实体</strong>。该协议不需要可靠的控制消息传输:每个节点定期发送控制消息，因此可以<strong>承受一些此类消息的合理丢失</strong>。这种损失经常发生在无线电网络中，由于碰撞或其他传输问题。</p>
+<p>而且，OLSR<strong>不需要按顺序传递消息</strong>。每个控制消息包含一个序列号，序列号为每个消息递增。因此，如果需要，控制消息的接收者可以很容易地识别哪些信息是最近的—即使消息在传输过程中被重新排序。</p>
+<p>此外，OLSR还支持协议扩展，如睡眠模式操作、多路路由等。这些扩展可以作为协议的补充而引入，而不会破坏与早期版本的向后兼容性</p>
+<p>OLSR不需要对IP包的格式进行任何更改。因此，任何现有的IP堆栈都可以这样使用:<strong>协议仅与路由表管理交互。</strong></p>
+<hr>
+<h4 id="MPR"><a href="#MPR" class="headerlink" title="MPR"></a>MPR</h4><p><strong>多点中继的思想</strong>是通过<em>减少同一区域的冗余重传来最小化网络中泛滥消息的开销</em>。网络中的每个节点在其对称的1跳邻居中选择一组节点，这些节点可以重新传输其消息。这组选定的邻居节点称为该节点的“多点中继”(MPR)集。节点N的邻居(不在其MPR集中)接收和处理广播消息，但不转发从节点N接收到的广播消息。</p>
+<p><u>每个节点从它的1跳对称邻居中选择它的MPR集</u>。选择这个集合时，<strong>它覆盖(在无线电范围方面)所有对称的严格2跳节点</strong>。N的MPR集合，记作MPR(N)，是N的对称1跳邻域的任意子集，满足以下条件:N的对称严格2跳邻域内的每个节点必须有一个指向MPR(N)的对称链接。MPR集越小，路由协议导致的控制流量开销越小。[2]给出了MPR选择算法的分析和实例。</p>
+<p><strong>每个节点维护选择它作为MPR的邻居集的信息</strong>。这个集合称为节点的“多点中继选择集合”(MPR选择集合)。节点从邻居定期接收的HELLO消息中获取此信息。</p>
+<p>从节点N的MPR选择器中发出的广播消息，打算在整个网络中传播，如果节点N还没有接收到广播消息，则假定该广播消息由节点N重新发送。这个集合可以随时间改变(即，当节点选择另一个MPR-set时)，并由其HELLO消息中的选择器节点指示。</p>
+<hr>
+<h4 id="协议功能"><a href="#协议功能" class="headerlink" title="协议功能"></a>协议功能</h4><p>本节概述总体协议的功能。OLSR被模块化为功能的“核心”和一组辅助功能，这些功能是协议操作所必需的。</p>
+<p>核心本身指定了能够在独立的MANET中提供路由的协议。每个辅助功能提供额外的功能，这些功能可能适用于特定的场景，例如，当一个节点提供MANET和另一个路由域之间的连接时。所有辅助功能都是兼容的，只要辅助功能的任何(子)集可以用核心实现即可。此外，该协议允许异构节点，即，实现辅助功能的不同子集的节点在网络中共存。将OLSR的功能划分为核心功能和一组辅助功能的目的是提供一个简单且易于理解的协议，并提供一种只在需要特定附加功能时增加复杂性的方法。</p>
+<h5 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h5><p>OLSR的核心功能指定了节点的行为，配备了参与MANET的OLSR接口，并运行OLSR作为路由协议。这包括OLSR协议消息的通用规范及其通过网络的传输，以及<strong>链路感知</strong>、<strong>拓扑扩散</strong>和<strong>路由计算</strong>。</p>
+<p>具体来说，核心是由以下组件组成的：</p>
+<p><strong>分组格式和转发：</strong></p>
+<p>​    包格式的通用规范和优化的洪泛机制是所有OLSR控制流量的传输机制</p>
+<p><strong>链路感知</strong></p>
+<p>​    链接感知是通过在接口上定期发送HELLO消息来实现的，通过这些接口检查连接性。为每个接口生成一个单独的HELLO消息，并根据第7节中的规定发出相应的HELLO消息。</p>
+<p>​    由链路感应产生的是一个本地链路集，描述“本地接口”和“远程接口”之间的链路。，邻居节点上的接口。</p>
+<p>​    如果链路层提供了足够的信息，则可以利用这些信息来填充本地链路集，而不是进行HELLO消息交换。</p>
+<p><strong>邻居检测</strong></p>
+<p>对于只有单个接口节点的网络，节点可以直接从作为链路感知的一部分交换的信息中扣除邻居集:根据定义，单个接口节点的“主地址”是该节点上唯一接口的地址。在具有多个接口节点的网络中，需要额外的信息才能将接口地址映射到主地址(从而映射到节点)。这些附加信息是通过第5节中描述的多个接口声明(MID)消息获得的。</p>
+<p><strong>MPR选择和MPR信号</strong></p>
+<p>MPR选择的目的是让一个节点选择它的邻居的一个子集，这样一个广播消息，由这些被选择的邻居重新传输，将被所有节点接收2跳。计算节点的MPR集时，对于每个接口，它都满足这个条件。执行此计算所需的信息是通过定期交换HELLO消息获得的，如第6节所述。MPR选择程序详见第8.3节。MPR信号是根据第6节的规定提供的。</p>
+<p><strong>拓扑控制消息扩散</strong></p>
+<p>拓扑控制消息是分散的，其目的是为网络中的每个节点提供足够的链路状态信息，以允许路由计算。拓扑控制消息在与第9节的规定相对应的情况下被扩散。</p>
+<p><strong>路由计算</strong></p>
+<hr>
+<h2 id="OLSR协议术语"><a href="#OLSR协议术语" class="headerlink" title="OLSR协议术语"></a>OLSR协议术语</h2><p><strong>node:</strong>一种MANET路由器</p>
+<p><strong>OLSR接口(OLSR interface):</strong>参与运行OLSR的MANET的网络设备。一个节点可以有多个OLSR接口，每个接口分配一个惟一的IP地址。</p>
+<p><strong>非OLSR接口(non OLSR interface)</strong>:网络设备，不参与运行OLSR的MANET。一个节点可能有几个非OLSR接口(无线和/或有线)。来自这些接口的路由信息可以注入到OLSR路由域。</p>
+<p><strong>单个OLSR接口节点(single OLSR interface node)</strong>:具有单个OLSR接口的节点，参与一个OLSR路由域。</p>
+<p><strong>多个OLSR接口节点(multiple OLSR interface node)</strong></p>
+<p><strong>主地址（main address）：</strong>一个节点的主地址，将在OLSR中用于控制流量，作为该节点发出的所有消息的“始发者地址”。它是节点的一个OLSR接口的地址。单个OLSR接口节点必须使用其唯一OLSR接口的地址作为主地址。多个OLSR接口节点必须选择一个OLSR接口地址作为“主地址”(相当于“路由器ID”或“节点标识符”)。选择哪个地址并不重要，但是节点应该始终使用与其主地址相同的地址。</p>
+<p><strong>邻居节点（neighbor node）</strong></p>
+<p><strong>二跳邻居节点（2-hop neighbor）</strong></p>
+<p><strong>严格2-hop邻居（strict 2-hop neighbor）</strong>：一个2跳邻居，它不是节点本身，也不是节点的邻居，而且是邻居的邻居，其意愿不同于节点的WILL_NEVER。</p>
+<p><strong>multipoint relay (MPR)</strong></p>
+<p><strong>multipoint relay selector (MPR selector, MS)</strong>：选择其1跳邻居节点X作为其多点中继的节点将被称为节点X的多点中继选择器。</p>
+<p><strong>链路（link）</strong>：一个链接是一对OLSR接口(来自两个不同的节点)，它们可以相互监听对方的声音。，其中一个可以接收来自另一个的流量)。当一个节点的一个接口与另一个节点的一个接口有链接时，该节点被称为与另一个节点有链接</p>
+<p><strong>对称链路（symmetric link）</strong></p>
+<p><strong>非对称链路（asymmetric link）</strong></p>
+<p><strong>对称一跳邻居</strong></p>
+<p><strong>对称二跳邻居</strong></p>
+<p><strong>对称严格二跳邻居</strong></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" title="OLSR路由协概述" target="_blank" rel="external">https://goolory.github.io/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/Goolory" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/Goolory" target="_blank"><span class="text-dark">xyongs</span><small class="ml-1x">初涉江湖</small></a></h3>
+        <div>任重道远，砥砺前行</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" title="OLSR数据包格式与转发"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/11/22/%E4%BD%BF%E7%94%A8nvm%E7%AE%A1%E7%90%86node/" title="使用nvm管理node_转"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Goolory" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.min.js"></script>
+<script src="/js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>OLSR数据包格式与转发 | Hexo</title>
+  <meta name="description" content="数据包格式与转发OLSR使用与协议相关的所有数据的统一数据包格式进行通信。这样做的目的是在不破坏向后兼容性的情况下促进协议的可扩展性。这也提供了一种简单的方式，将不同“类型”的信息承载到单个传输中，从而为给定的实现优化利用网络提供的最大帧大小。这些数据包被嵌入UDP数据报在网络上传输。本文档使用IPv4地址。关于IPv6的考虑在第17节中给出。 每个包封装一个或多个消息。这些消息共享一个公共的头格">
+<meta name="keywords" content="OLSR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OLSR数据包格式与转发">
+<meta property="og:url" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91&#x2F;index.html">
+<meta property="og:site_name" content="xyongs&#39; blog">
+<meta property="og:description" content="数据包格式与转发OLSR使用与协议相关的所有数据的统一数据包格式进行通信。这样做的目的是在不破坏向后兼容性的情况下促进协议的可扩展性。这也提供了一种简单的方式，将不同“类型”的信息承载到单个传输中，从而为给定的实现优化利用网络提供的最大帧大小。这些数据包被嵌入UDP数据报在网络上传输。本文档使用IPv4地址。关于IPv6的考虑在第17节中给出。 每个包封装一个或多个消息。这些消息共享一个公共的头格">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91&#x2F;1572351481258.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91&#x2F;1572351839640.png">
+<meta property="og:updated_time" content="2020-03-17T03:05:56.836Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;goolory.github.io&#x2F;2019&#x2F;11&#x2F;22&#x2F;OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91&#x2F;1572351481258.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://goolory.github.io/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="xyongs&#39; blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Goolory" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">xyongs</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">初涉江湖</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> nanjing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Goolory" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/MANET/">MANET</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OLSR/" rel="tag">OLSR</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Java/" style="font-size: 14px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/OLSR/" style="font-size: 13.5px;">OLSR</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/node/" style="font-size: 13px;">node</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/03/17/hello-world/" class="title">Hexo使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-03-17T03:05:56.844Z" itemprop="datePublished">2020-03-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/25/%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/" class="title">基本算法思想</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-25T14:21:44.000Z" itemprop="datePublished">2019-11-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/MANET/">MANET</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" class="title">OLSR数据包格式与转发</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T15:08:37.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/MANET/">MANET</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" class="title">OLSR路由协概述</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T15:03:40.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/22/%E4%BD%BF%E7%94%A8nvm%E7%AE%A1%E7%90%86node/" class="title">使用nvm管理node_转</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-22T14:23:12.000Z" itemprop="datePublished">2019-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-OLSR数据包格式与转发" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      OLSR数据包格式与转发
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" class="article-date">
+	  <time datetime="2019-11-22T15:08:37.000Z" itemprop="datePublished">2019-11-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/MANET/">MANET</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/OLSR/" rel="tag">OLSR</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="数据包格式与转发"><a href="#数据包格式与转发" class="headerlink" title="数据包格式与转发"></a>数据包格式与转发</h2><p>OLSR使用与协议相关的所有数据的统一数据包格式进行通信。这样做的目的是在不破坏向后兼容性的情况下促进协议的可扩展性。这也提供了一种简单的方式，将不同“类型”的信息承载到单个传输中，从而为给定的实现优化利用网络提供的最大帧大小。这些数据包被嵌入UDP数据报在网络上传输。本文档使用IPv4地址。关于IPv6的考虑在第17节中给出。</p>
+<p>每个包封装一个或多个消息。这些消息共享一个公共的头格式，这使节点能够正确地接受和(如果适用的话)重新传输未知类型的消息。</p>
+<p>消息可以被淹没到整个网络中，或者可以将淹没限制在距离消息始发者直径(以跳数表示)以内的节点上。因此，将消息传递给节点的邻居只是洪泛的一个特例。当淹没任何控制消息时，重复的重发将在本地被消除(即，每个节点都维护一个重复的集合，以防止发送相同的OLSR控制消息两次)，并通过使用MPRs在整个网络中最小化。</p>
+<p>此外，节点可以检查消息的标头，以获得关于到消息发送者的距离(以跳数表示)的信息。这种特性在某些情况下可能有用，例如，来自存储在节点上的接收控制消息的时间信息取决于到发送方的距离。</p>
+<hr>
+<h4 id="数据包格式"><a href="#数据包格式" class="headerlink" title="数据包格式"></a>数据包格式</h4><p>OLSR中任何包的基本布局如下(省略IP和UDP报头)：</p>
+<p><img src="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/1572351481258.png" alt="1572351481258"></p>
+<p><strong>Packet Length:</strong>数据包的长度(以字节为单位)</p>
+<p><strong>Packet Sequence Number</strong>：数据包序列号</p>
+<p><strong>Message Type</strong></p>
+<p><strong>Vtime:</strong> 此字段指示在接收后多长时间内节点必须认为消息中包含的信息是有效的，除非接收到信息的最新更新。有效时间由其尾数(Vtime字段的四个最高位)和指数(Vtime字段的四个最低位)表示。换句话说</p>
+<p><img src="/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/1572351839640.png" alt="1572351839640"></p>
+<p>其中a为Vtime字段的四个最高位代表的整数，b为Vtime字段的四个最低位代表的整数。第18节规定了比例因子C的建议值。</p>
+<p><strong>Message Size:</strong>这将给出此消息的大小，以字节为单位进行计数，并从“消息类型”字段的开始到下一个“消息类型”字段的开始(或者，如果没有以下消息，则直到数据包结束)进行测量。</p>
+<p><strong>原地址（Originator Address）：</strong>此字段包含最初生成此消息的节点的主地址。此字段不应与来自IP报头的源地址混淆，后者每次都更改为重新传输此消息的中间接口的地址。在重发中，发起人地址字段必须“永远”不变。</p>
+<p><strong>生存时间（Time To Live）</strong>：此字段包含要传输的消息的最大跳数。在重新传输消息之前，生存时间必须减少1。当节点接收到时间为0或1的消息时，在任何情况下都不能重新传输该消息。通常，节点不会接收TTL为0的消息。</p>
+<p><strong>跳数（Hop Count）</strong>：此字段包含消息已达到的跳数。在重新传输消息之前，跳数必须增加1。</p>
+<hr>
+<h4 id="包处理和消息泛滥"><a href="#包处理和消息泛滥" class="headerlink" title="包处理和消息泛滥"></a>包处理和消息泛滥</h4><p>在接收到基本数据包后，节点检查每个“消息头”。根据“消息类型”字段的值，节点可以确定消息的命运。一个节点可以多次接收相同的消息。因此，为了避免对一些已经接收和处理的消息进行重新处理，每个节点维护一个重复集。在这个集合中，节点记录关于最近接收的消息的信息，避免对消息进行重复处理。对于这样的消息，节点记录一个“重复元组”(D_addr、D_seq_num、d_re、D_iface_list、D_time)，其中D_addr是消息的发起者地址，D_seq_num是消息的消息序列号，d_retransmission是一个布尔值，指示消息是否已被发送</p>
+<p>已经重新传输的D_iface_list是接收到消息的接口的地址列表，D_time指定元组过期和<em>必须</em>删除的时间</p>
+<p><strong>因此，在接收到基本数据包时，节点必须为每个封装的消息执行以下任务：</strong></p>
+<ol>
+<li><p>如果数据包不包含任何消息(即，数据包长度小于或等于数据包报头的大小)，则必须悄悄地丢弃数据包。对于IPv4地址，这意味着当数据包长度小于16时，必须静静地丢弃数据包。</p>
+</li>
+<li><p>如果消息的生存时间小于或等于“0”(0)，或者消息是由接收节点发送的(即，消息的发起者地址为接收节点的主地址):消息必须被静默丢弃。</p>
+</li>
+<li><p>处理条件</p>
+<p>​    若：</p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D_addr == Originator Address, AND</span><br><span class="line">D_seq_num == Message Sequence Number</span><br></pre></td></tr></table></figure>
+
+<p>表示信息早已被处理，无需再处理</p>
+</li>
+</ol>
+<hr>
+<h4 id="默认转发算法"><a href="#默认转发算法" class="headerlink" title="默认转发算法"></a>默认转发算法</h4><ol>
+<li><p>如果未检测到消息的发送方接口地址位于节点的对称1跳邻域内，则转发算法必须在此静默停止(且不能转发消息)。</p>
+</li>
+<li><p>若：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D_addr == Originator Address, AND</span><br><span class="line">D_seq_num == Message Sequence Number</span><br></pre></td></tr></table></figure>
+
+<p>已收到，将进一步考虑转发消息，当且仅当;</p>
+<blockquote>
+<p>D_retransmitted is false, AND 接收到消息的接口的地址不在D_iface_list地址中</p>
+</blockquote>
+</li>
+<li><p>否则，如果这样的条目不存在，则进一步考虑转发消息。</p>
+</li>
+<li><p>如果发送方接口地址是该节点的MPR选择器的接口地址，并且消息的存活时间大于’1’，则必须重新传输消息(如后面的步骤6到8所述)。</p>
+</li>
+<li><p>如果重复集中存在具有相同发起者地址和相同消息序列号的项，则按以下方式更新该项:</p>
+</li>
+<li><p>消息的TTL减少了1。</p>
+</li>
+<li><p>消息的跃点计数增加1</p>
+</li>
+<li><p>消息在所有接口上广播(注意:消息头的其余字段应该保持不变)。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://goolory.github.io/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/" title="OLSR数据包格式与转发" target="_blank" rel="external">https://goolory.github.io/2019/11/22/OLSR%E6%95%B0%E6%8D%AE%E5%8C%85%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E5%8F%91/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/Goolory" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/Goolory" target="_blank"><span class="text-dark">xyongs</span><small class="ml-1x">初涉江湖</small></a></h3>
+        <div>任重道远，砥砺前行</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/11/25/%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3/" title="基本算法思想"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/11/22/OLSR%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0/" title="OLSR路由协概述"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Goolory" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.min.js"></script>
+<script src="/js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
